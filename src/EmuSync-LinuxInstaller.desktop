@@ -1,0 +1,7 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=Install EmuSync
+Exec=sh -c 'rm -f /tmp/user-install-script.sh; if curl -S -s -L -O --output-dir /tmp/ --connect-timeout 60 https://github.com/emu-sync/EmuSync-LinuxInstaller/releases/latest/download/user-install-script.sh; then bash /tmp/user-install-script.sh; else echo "Something went wrong, please report this if it is a bug"; read; fi'
+Terminal=true
+Type=Application
+StartupNotify=false
