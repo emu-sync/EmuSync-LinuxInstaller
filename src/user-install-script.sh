@@ -65,6 +65,7 @@ fi
 # all code below should be run as root
 USER_DIR="$(getent passwd $SUDO_USER | cut -d: -f6)"
 EMUSYNC_FOLDER="${USER_DIR}/EmuSync"
+DESKTOP_FILE="/home/$SUDO_USER/Desktop/EmuSync.desktop"
 
 # if EmuSync is already installed, then add 'uninstall' and 'wipe' option
 if [[ -f "${EMUSYNC_FOLDER}/EmuSync.AppImage" ]] ; then
@@ -115,6 +116,11 @@ if [[ "$OPTION" == "(uninstall)" || "$OPTION" == "(wipe)"|| "$OPTION" == "(updat
     fi
 
     if [[ "$OPTION" != "(update)" ]]; then
+
+        if [ -f "$DESKTOP_FILE" ]; then
+            sudo -u $SUDO_USER rm "$DESKTOP_FILE"
+        fi
+
         echo "100" ; echo "# Uninstall finished, installer can now be closed";
     else
         echo "100" ; echo "# Uninstall complete, please continue to install the update";
@@ -181,10 +187,25 @@ sudo systemctl daemon-reload
 sudo systemctl enable $SERVICE_NAME
 sudo systemctl start $SERVICE_NAME
 
-# this (retroactively) fixes a bug where users who ran the installer would have homebrew owned by root instead of their user
+# this (retroactively) fixes a bug where users who ran the installer would have emusync folder owned by root instead of their user
 # will likely be removed at some point in the future
 if [ "$SUDO_USER" =  "deck" ]; then
   sudo chown -R deck:deck "${EMUSYNC_FOLDER}"
+fi
+if [ ! -f "$DESKTOP_FILE" ]; then
+    sudo -u $SUDO_USER bash -c "cat > \"$DESKTOP_FILE\" <<EOF
+[Desktop Entry]
+Type=Application
+Name=EmuSync
+Comment=Launch EmuSync
+Exec=\"$EMUSYNC_FOLDER/EmuSync.AppImage\"
+Icon=\"$EMUSYNC_FOLDER/emu-sync-icon.png\"
+Terminal=false
+Categories=Game;
+EOF"
+
+    chmod +x "$DESKTOP_FILE"
+    update-desktop-database ~/.local/share/applications 2>/dev/null || true
 fi
 
 echo "100" ; echo "# Install finished, installer can now be closed";
