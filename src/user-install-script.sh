@@ -75,7 +75,7 @@ if [[ -f "${EMUSYNC_FOLDER}/EmuSync.AppImage" ]] ; then
     FALSE "(wipe)" "Uninstall EmuSync and delete config")
 else
     OPTION=$(zen_nospam --title="EmuSync Installer" --width=750 --height=300 --list --radiolist --text "Select an option:" --hide-header --column "Buttons" --column "Choice" --column "Info" \
-    TRUE "(install)" "Install Emusync")
+    TRUE "(install)" "Install EmuSync")
 fi
 
 if [[ $? -eq 1 ]] || [[ $? -eq 5 ]]; then
