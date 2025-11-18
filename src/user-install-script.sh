@@ -194,19 +194,21 @@ if [ "$SUDO_USER" =  "deck" ]; then
 fi
 
 if [ ! -f "$DESKTOP_FILE" ]; then
-    sudo -u $SUDO_USER bash -c "cat > \"$DESKTOP_FILE\" <<EOF
+
+ICON=$(find "$EMUSYNC_FOLDER" -maxdepth 1 -type f -iname "emu-sync-icon.png" | head -n 1)
+
+    sudo -u "$SUDO_USER" bash -c "cat > '$DESKTOP_FILE' <<EOF
 [Desktop Entry]
 Type=Application
 Name=EmuSync
 Comment=Launch EmuSync
-Exec=\"${EMUSYNC_FOLDER}/EmuSync.AppImage\"
-Icon=${EMUSYNC_FOLDER}/emu-sync-icon.png
+Exec=\"$EMUSYNC_FOLDER/EmuSync.AppImage\"
+Icon=$ICON
 Terminal=false
 Categories=Game;
 EOF"
 
     chmod +x "$DESKTOP_FILE"
-    update-desktop-database ~/.local/share/applications 2>/dev/null || true
 fi
 
 echo "100" ; echo "# Install finished, installer can now be closed";
