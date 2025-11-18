@@ -192,14 +192,15 @@ sudo systemctl start $SERVICE_NAME
 if [ "$SUDO_USER" =  "deck" ]; then
   sudo chown -R deck:deck "${EMUSYNC_FOLDER}"
 fi
+
 if [ ! -f "$DESKTOP_FILE" ]; then
     sudo -u $SUDO_USER bash -c "cat > \"$DESKTOP_FILE\" <<EOF
 [Desktop Entry]
 Type=Application
 Name=EmuSync
 Comment=Launch EmuSync
-Exec=\"$EMUSYNC_FOLDER/EmuSync.AppImage\"
-Icon=\"$EMUSYNC_FOLDER/emu-sync-icon.png\"
+Exec=\"${EMUSYNC_FOLDER}/EmuSync.AppImage\"
+Icon=${EMUSYNC_FOLDER}/emu-sync-icon.png
 Terminal=false
 Categories=Game;
 EOF"
