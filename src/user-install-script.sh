@@ -66,6 +66,7 @@ fi
 USER_DIR="$(getent passwd $SUDO_USER | cut -d: -f6)"
 EMUSYNC_FOLDER="${USER_DIR}/EmuSync"
 DESKTOP_FILE="/home/$SUDO_USER/Desktop/EmuSync.desktop"
+APPLICATIONS_FILE="/home/$SUDO_USER/.local/share/applications/EmuSync.desktop" # common location for .desktop files looked at by app launchers and search bars
 
 # if EmuSync is already installed, then add 'uninstall' and 'wipe' option
 if [[ -f "${EMUSYNC_FOLDER}/EmuSync.AppImage" ]] ; then
@@ -119,6 +120,9 @@ if [[ "$OPTION" == "(uninstall)" || "$OPTION" == "(wipe)"|| "$OPTION" == "(updat
 
         if [ -f "$DESKTOP_FILE" ]; then
             sudo -u $SUDO_USER rm "$DESKTOP_FILE"
+        fi
+        if [ -f "$APPLICATIONS_FILE" ]; then
+            sudo -u $SUDO_USER rm "$APPLICATIONS_FILE"
         fi
 
         echo "100" ; echo "# Uninstall finished, installer can now be closed";
@@ -193,11 +197,11 @@ if [ "$SUDO_USER" =  "deck" ]; then
   sudo chown -R deck:deck "${EMUSYNC_FOLDER}"
 fi
 
-if [ ! -f "$DESKTOP_FILE" ]; then
+if [ ! -f "$DESKTOP_FILE" ] || [ ! -f "$APPLICATIONS_FILE" ]; then 
 
 ICON=$(find "$EMUSYNC_FOLDER" -maxdepth 1 -type f -iname "emu-sync-icon.png" | head -n 1)
 
-    sudo -u "$SUDO_USER" bash -c "cat > '$DESKTOP_FILE' <<EOF
+    sudo -u "$SUDO_USER" bash -c "tee '$DESKTOP_FILE' '$APPLICATIONS_FILE' <<EOF
 [Desktop Entry]
 Type=Application
 Name=EmuSync
@@ -208,7 +212,7 @@ Terminal=false
 Categories=Game;
 EOF"
 
-    chmod +x "$DESKTOP_FILE"
+    chmod +x "$DESKTOP_FILE" "$APPLICATIONS_FILE"
 fi
 
 echo "100" ; echo "# Install finished, installer can now be closed";
